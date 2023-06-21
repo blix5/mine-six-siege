@@ -19,11 +19,16 @@ public class AnimatedItem extends Item implements GeoItem {
 
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+    protected String localpath;
 
-    public AnimatedItem(Settings settings) {
+    public AnimatedItem(Settings settings, String path) {
         super(settings);
+        localpath = path;
     }
 
+    public String getLocalpath() {
+        return localpath;
+    }
     @Override
     public void createRenderer(Consumer<Object> consumer) {
         consumer.accept(new RenderProvider() {
@@ -52,7 +57,7 @@ public class AnimatedItem extends Item implements GeoItem {
     }
 
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
-        tAnimationState.getController().setAnimation(RawAnimation.begin().then("reload", Animation.LoopType.LOOP));
+        tAnimationState.getController().setAnimation(RawAnimation.begin().then("animation." + localpath + ".reload", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 

@@ -9,17 +9,17 @@ public class AnimatedItemModel extends GeoModel<AnimatedItem> {
 
     @Override
     public Identifier getModelResource(AnimatedItem animatable) {
-        return new Identifier(SixSiege.MOD_ID, "geo/" + animatable.getName() + ".geo.json");
+        return new Identifier(SixSiege.MOD_ID, "geo/" + animatable.getLocalpath() + ".geo.json");
     }
 
     @Override
     public Identifier getTextureResource(AnimatedItem animatable) {
-        return new Identifier(SixSiege.MOD_ID, "textures/item/" + animatable.getName() + ".png");
+        return new Identifier(SixSiege.MOD_ID, "textures/item/" + animatable.getLocalpath() + ".png");
     }
 
     @Override
     public Identifier getAnimationResource(AnimatedItem animatable) {
-        return new Identifier(SixSiege.MOD_ID, "animations/" + animatable.getName() + ".animation.json");
+        return new Identifier(SixSiege.MOD_ID, "animations/" + animatable.getLocalpath() + ".animation.json");
     }
 
 }
