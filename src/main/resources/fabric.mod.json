@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "sixsiege",
+	"version": "${version}",
+	"name": "Rainbow Six: Siege Mod",
+	"description": "adds the worst fps game of all time into minecraft because fuck you all",
+	"authors": [
+		"blix5"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/sixsiege/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.blix.sixsiege.SixSiege"
+		],
+		"fabric-datagen": [
+			"com.blix.sixsiege.SixSiegeDataGenerator"
+		]
+	},
+	"mixins": [
+		"sixsiege.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"geckolib": ">=4.2",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
