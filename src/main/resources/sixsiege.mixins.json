@@ -1,11 +1,20 @@
 {
-	"required": true,
-	"package": "com.blix.sixsiege.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"SixSiegeMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.blix.sixsiege.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ModEntityDataSaverMixin"
+  ],
+  "client": [
+    "AbstractClientPlayerEntityMixin",
+    "BipedEntityModelMixin",
+    "CameraInvoker",
+    "CameraMixin",
+    "GameRendererMixin",
+    "HeldItemRendererMixin",
+    "SixSiegeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }

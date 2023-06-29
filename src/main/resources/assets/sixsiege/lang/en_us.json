@@ -115,5 +115,18 @@
 
   "itemgroup.r6s_primary": "R6S Primary Weapons",
   "itemgroup.r6s_secondary": "R6S Secondary Weapons",
-  "itemgroup.r6s_blocks": "R6S Blocks"
+  "itemgroup.r6s_blocks": "R6S Blocks",
+
+  "key.category.sixsiege": "Rainbow Six: Siege Mod",
+  "key.sixsiege.reload": "Reload",
+  "key.sixsiege.lean_left": "Lean Left",
+  "key.sixsiege.lean_right": "Lean Right",
+
+  "sounds.sixsiege.l85a2_shoot": "L85A2 fired",
+  "sounds.sixsiege.l85a2_reload": "L85A2 reloading",
+
+  "sounds.sixsiege.barricade_break": "Barricade broken",
+  "sounds.sixsiege.barricade_place": "Barricade placed",
+  "sounds.sixsiege.barricade_hit": "Barricade breaking"
+
 }

@@ -1,5 +1,34 @@
 {
   "variants": {
-    "": { "model": "sixsiege:block/barricade_single0" }
+    "facing=east,half=lower": {
+      "model": "sixsiege:block/barricade_single_bottom_0",
+      "y": 90
+    },
+    "facing=east,half=upper": {
+      "model": "sixsiege:block/barricade_single_top_0",
+      "y": 90
+    },
+    "facing=north,half=lower": {
+      "model": "sixsiege:block/barricade_single_bottom_0"
+    },
+    "facing=north,half=upper": {
+      "model": "sixsiege:block/barricade_single_top_0"
+    },
+    "facing=south,half=lower": {
+      "model": "sixsiege:block/barricade_single_bottom_0",
+      "y": 180
+    },
+    "facing=south,half=upper": {
+      "model": "sixsiege:block/barricade_single_top_0",
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "sixsiege:block/barricade_single_bottom_0",
+      "y": 270
+    },
+    "facing=west,half=upper": {
+      "model": "sixsiege:block/barricade_single_top_0",
+      "y": 270
+    }
   }
 }

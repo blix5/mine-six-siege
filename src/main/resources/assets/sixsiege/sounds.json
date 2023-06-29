@@ -1,0 +1,32 @@
+{
+  "l85a2_shoot": {
+    "subtitle": "sounds.sixsiege.l85a2_shoot",
+    "sounds": [
+      "sixsiege:item/l85a2.shoot"
+    ]
+  },
+  "l85a2_reload": {
+    "subtitle": "sounds.sixsiege.l85a2_reload",
+    "sounds": [
+      "sixsiege:item/l85a2.reload"
+    ]
+  },
+  "barricade_break": {
+    "subtitle": "sounds.sixsiege.barricade_break",
+    "sounds": [
+      "sixsiege:block/barricade.break"
+    ]
+  },
+  "barricade_place": {
+    "subtitle": "sounds.sixsiege.barricade_place",
+    "sounds": [
+      "sixsiege:block/barricade.place"
+    ]
+  },
+  "barricade_hit": {
+    "subtitle": "sounds.sixsiege.barricade_hit",
+    "sounds": [
+      "sixsiege:block/barricade.hit"
+    ]
+  }
+}

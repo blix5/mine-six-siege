@@ -2,6 +2,7 @@ package com.blix.sixsiege.item;
 
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import com.blix.sixsiege.sound.ModSounds;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -14,7 +15,9 @@ public class ModItems {
     public static final Item M59081 = registerItem("m59081",
             new Item(new FabricItemSettings()));
     public static final Item L85A2 = registerItem("l85a2",
-            new AnimatedItem(new FabricItemSettings(), "l85a2"));
+            new AnimatedItem(new FabricItemSettings().maxCount(1), "l85a2",
+                    47, 29, 25, 2, 48, 31,
+                    ModSounds.L85A2_SHOOT, ModSounds.L85A2_RELOAD));
     public static final Item AR33 = registerItem("ar33",
             new Item(new FabricItemSettings()));
     public static final Item G36C = registerItem("g36c",
