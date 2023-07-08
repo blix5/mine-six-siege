@@ -21,13 +21,11 @@ public abstract class GameRendererMixin {
 
     @Shadow public abstract MinecraftClient getClient();
 
-    @Shadow public abstract Camera getCamera();
-
     @Inject(method = "renderWorld", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/render/Camera;update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V",
             shift = At.Shift.BEFORE))
     private void postCameraUpdate(float tickDelta, long limitTime, MatrixStack matrix, CallbackInfo ci) {
-        if(this.getClient().player != null && !this.getCamera().isThirdPerson()) {
+        if(this.getClient().player != null) {
             if(this.getClient().player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
                 float m = this.getClient().getLastFrameDuration();
 

@@ -15,21 +15,15 @@ public class ClientPlayerTickHandler implements ClientTickEvents.StartTick{
 
         if(client.player != null) {
             float speed;
-            float cameraSpeed;
-
             if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
                 if (client.player.getActiveItem().getItem().getClass().equals(AnimatedItem.class)) {
                     speed = 0.2f;
-                    cameraSpeed = 0.6f;
                 } else {
                     speed = 0.1f;
-                    cameraSpeed = 1.0f;
                 }
             } else {
                 speed = 0.1f;
-                cameraSpeed = 1.0f;
             }
-
             client.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
             ClientPlayNetworking.send(ModMessages.MOVEMENT_SPEED_ID, PacketByteBufs.create());
         }

@@ -29,17 +29,23 @@ public abstract class HeldItemRendererMixin {
             if(player.getActiveItem().isOf(item.getItem())) {
                 float m = MinecraftClient.getInstance().getLastFrameDuration();
 
-                if(KeyInputHandler.getTiltedLeft()) {
+                if(!player.getItemCooldownManager().isCoolingDown(player.getMainHandStack().getItem())) {
+                    matrices.translate(-0.48f, 0.06f, -0.3f);
+                } else {
+                    KeyInputHandler.setTiltedLeft(false);
+                    KeyInputHandler.setTiltedRight(false);
+                }
+                matrices.scale(1.0f, 1.0f, 1.0f);
+
+                if (KeyInputHandler.getTiltedLeft()) {
                     tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 8);
-                } else if(KeyInputHandler.getTiltedRight()) {
+                } else if (KeyInputHandler.getTiltedRight()) {
                     tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
                 } else {
                     tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 0);
                 }
-                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(tiltStage));
-
-                matrices.translate(-0.48f, 0.06f, -0.3f);
-                matrices.scale(1.0f, 1.0f, 1.0f);
+                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(tiltStage),
+                        0.48f, -0.06f, 0.3f);
             }
         }
     }

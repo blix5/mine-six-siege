@@ -2,11 +2,14 @@ package com.blix.sixsiege.item.custom;
 
 import com.blix.sixsiege.item.client.AnimatedItemRenderer;
 import com.blix.sixsiege.networking.ModMessages;
+import com.blix.sixsiege.sound.ModSounds;
 import com.blix.sixsiege.util.IEntityDataServer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -18,6 +21,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
@@ -50,6 +54,8 @@ public class AnimatedItem extends Item implements GeoItem {
     private boolean reloading = false;
     private boolean sentReload = false;
     private boolean cancelReload = false;
+
+    private SoundInstance reloadSoundInstance;
 
     public AnimatedItem(Settings settings, String path, int closeDam, int longDam, int damageDropoff, int tpr, int reloadLength, int maxAmmo,
                         SoundEvent shootSound, SoundEvent reloadSound) {
@@ -134,7 +140,12 @@ public class AnimatedItem extends Item implements GeoItem {
     }
 
     public void setCancelReload(boolean cancelReload) {
-        this.cancelReload = cancelReload;
+        MinecraftClient client = MinecraftClient.getInstance();
+        ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
+        if(((IEntityDataServer) serverPlayer).getPersistentData().getInt("ammo") > 0) {
+            this.cancelReload = cancelReload;
+            client.getSoundManager().stop(reloadSoundInstance);
+        }
     }
 
     @Override
@@ -180,9 +191,12 @@ public class AnimatedItem extends Item implements GeoItem {
                             tAnimationState.getController().setAnimationSpeed(1.0D);
                             tAnimationState.getController().setAnimation(RawAnimation.begin().thenPlay("animation." + localpath + ".reload"));
                             serverPlayer.getItemCooldownManager().set(weapon, weapon.reloadLength);
-                            serverPlayer.getServerWorld().playSound(null, serverPlayer.getBlockPos(),
+                            serverPlayer.getServerWorld().playSound(serverPlayer, serverPlayer.getBlockPos(),
                                     ((AnimatedItem) serverPlayer.getMainHandStack().getItem()).getReloadSound(),
                                     SoundCategory.PLAYERS, 1.0f, 1.0f);
+                            this.reloadSoundInstance = PositionedSoundInstance.master(((AnimatedItem) serverPlayer.getMainHandStack().getItem()).getReloadSound(),
+                                    1.0f, 1.0f);
+                            client.getSoundManager().play(reloadSoundInstance);
                             this.reloading = false;
                             this.sentReload = false;
                         } else if (serverPlayer.getItemCooldownManager().isCoolingDown(weapon)) {

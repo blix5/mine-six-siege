@@ -3,18 +3,33 @@ package com.blix.sixsiege.networking.packet;
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.blix.sixsiege.util.AmmoData;
 import com.blix.sixsiege.util.IEntityDataServer;
+import com.blix.sixsiege.util.MathHelperUtil;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockStateRaycastContext;
+import net.minecraft.world.RaycastContext;
 
 public class ShootC2SPacket {
 
@@ -27,22 +42,36 @@ public class ShootC2SPacket {
                 AmmoData.removeAmmo(((IEntityDataServer) player), 1);
                 player.getServerWorld().playSound(null, player.getBlockPos(), ((AnimatedItem) player.getMainHandStack().getItem()).getShootSound(),
                         SoundCategory.PLAYERS, 1.0f, 1.0f);
+                player.getServerWorld().spawnParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1, player.getZ(), 1,
+                        0.1, 0.1, 0.1, 0.005);
 
-                Vec3d maxVec = player.raycast(300.0D, 1.0f, true).getPos();
-                EntityHitResult hitResult = ProjectileUtil.raycast(player, player.getCameraPosVec(1.0f), maxVec,
+                HitResult hitResult = player.getCameraEntity().raycast(300.0D, 1.0f, false);
+                Vec3d maxVec = hitResult.getPos();
+                Vec3d playerCameraVec = player.getCameraPosVec(1.0f);
+
+                BlockHitResult blockHitResult = player.getWorld().raycast(
+                        new BlockStateRaycastContext(playerCameraVec, maxVec, AbstractBlock.AbstractBlockState::isOpaque));
+
+                boolean softWall = false;
+                if(blockHitResult != null) {
+                    BlockState state = player.getWorld().getBlockState(blockHitResult.getBlockPos());
+                    softWall = blockHitResult.getType().equals(HitResult.Type.MISS) && hitResult.getType().equals(HitResult.Type.BLOCK);
+                }
+                EntityHitResult entityHitResult = ProjectileUtil.raycast(player, playerCameraVec,
+                        softWall ? maxVec.add(maxVec.subtract(playerCameraVec)) : maxVec,
                         new Box(player.getX() - 300, player.getY() - 300, player.getZ() - 300, player.getX() + 300, player.getY() + 300,
-                                player.getZ() + 300), EntityPredicates.VALID_LIVING_ENTITY, 10000.0d);
+                        player.getZ() + 300), EntityPredicates.VALID_LIVING_ENTITY, 10000.0d);
 
-                if (hitResult != null) {
-                    if (hitResult.getType().equals(HitResult.Type.ENTITY)) {
+                if (entityHitResult != null) {
+                    if (entityHitResult.getType().equals(HitResult.Type.ENTITY)) {
                         int weaponDam;
 
-                        if (hitResult.getEntity().distanceTo(player) <= weapon.getDamageDropoffDist()) {
+                        if (entityHitResult.getEntity().distanceTo(player) <= weapon.getDamageDropoffDist()) {
                             weaponDam = weapon.getCloseDamage();
                         } else {
                             weaponDam = weapon.getLongDamage();
                         }
-                        hitResult.getEntity().damage(hitResult.getEntity().getDamageSources().playerAttack(player), weaponDam);
+                        entityHitResult.getEntity().damage(entityHitResult.getEntity().getDamageSources().playerAttack(player), weaponDam);
                     }
                 }
                 if (player.getItemCooldownManager().isCoolingDown(weapon)) {

@@ -32,7 +32,6 @@ public class KeyInputHandler {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if(client.player != null) {
                 if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
-                    ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
                     AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
 
                     if (reloadingKey.isPressed()) {
@@ -103,6 +102,14 @@ public class KeyInputHandler {
 
     public static boolean getTiltedRight() {
         return tiltedRight;
+    }
+
+    public static void setTiltedLeft(boolean tiltedLeft) {
+        KeyInputHandler.tiltedLeft = tiltedLeft;
+    }
+
+    public static void setTiltedRight(boolean tiltedRight) {
+        KeyInputHandler.tiltedRight = tiltedRight;
     }
 
 }

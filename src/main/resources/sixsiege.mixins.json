@@ -8,10 +8,11 @@
   "client": [
     "AbstractClientPlayerEntityMixin",
     "BipedEntityModelMixin",
-    "CameraInvoker",
     "CameraMixin",
     "GameRendererMixin",
     "HeldItemRendererMixin",
+    "InGameHudMixin",
+    "MouseMixin",
     "SixSiegeMixin"
   ],
   "injectors": {

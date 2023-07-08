@@ -9,36 +9,63 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.world.LightType;
+
+import java.util.Random;
 
 public class ScopeHudOverlay implements HudRenderCallback {
 
     private static final Identifier HOLO_A = new Identifier(SixSiege.MOD_ID, "textures/gui/scopes/holo_a.png");
     private int ammoSynced = 30;
-    private float tiltStage = 0;
-    private int aimProgress = 0;
+    protected float tiltStage = 0;
+    protected int aimProgress = 0;
+
+    private static boolean shouldAddRecoil;
+    private float f;
+    protected float g;
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
         MinecraftClient client = MinecraftClient.getInstance();
 
-        if(ammoSynced != 0) {
-            ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
-            AmmoData.syncAmmo(((IEntityDataServer) serverPlayer).getPersistentData().getInt("ammo"), serverPlayer);
-            ammoSynced--;
-        }
+        if(client.player != null) {
+            if (shouldAddRecoil) {
+                f = 3.5f;
+                this.g = 0.5f;
+                shouldAddRecoil = false;
+            }
+            f = MathHelper.lerp(1.5f * client.getLastFrameDuration(), f, 0.0f);
+            if (f > 0.00001) {
+                float fixed = f * client.getLastFrameDuration();
+                client.player.setPitch(client.player.getPitch() - fixed);
+                client.player.setYaw(client.player.getYaw() + new Random().nextFloat(fixed / -2, fixed / 2));
+            } else {
+                f = 0;
+            }
 
-        if (((IEntityDataServer) client.player).getPersistentData().getInt("ammo") > 0) {
-            if (client.options.getPerspective().isFirstPerson()) {
+            if (ammoSynced != 0) {
+                ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
+                AmmoData.syncAmmo(((IEntityDataServer) serverPlayer).getPersistentData().getInt("ammo"), serverPlayer);
+                ammoSynced--;
+            }
+
+
+            if (client.options.getPerspective().isFirstPerson() && !client.isPaused()) {
                 if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
                     AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
                     float m = client.getLastFrameDuration();
 
-                    if (client.player.getActiveItem().isOf(weapon)) {
-                        this.renderScopeOverlay(drawContext, 1.125f);
-                        this.aimProgress = MathHelper.lerp(m, this.aimProgress, 100);
+                    if (client.player.getActiveItem().isOf(weapon) && (((IEntityDataServer) client.player).getPersistentData().getInt("ammo") > 0)) {
+                        this.renderScopeOverlay(drawContext);
+                        if(this.aimProgress < 90) {
+                            this.aimProgress = MathHelper.lerp(m, this.aimProgress, 100);
+                        } else {
+                            this.aimProgress = 100;
+                        }
                     } else {
                         this.aimProgress = 0;
                     }
@@ -49,15 +76,25 @@ public class ScopeHudOverlay implements HudRenderCallback {
         }
     }
 
-    private void renderScopeOverlay(DrawContext context, float scale) {
+    protected void renderScopeOverlay(DrawContext context) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
+        this.g = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, this.g, 0.0f);
+        float m = client.getLastFrameDuration();
+        float fixed = this.g * m * 3;
+
         float f;
         float g = f = (float)Math.min(context.getScaledWindowWidth(), context.getScaledWindowHeight());
-        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * scale;
+        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * (float) 1.125 + fixed;
         int i = MathHelper.floor(f * h);
         int j = MathHelper.floor(g * h);
         int k = (context.getScaledWindowWidth() - i) / 2;
         int l = (context.getScaledWindowHeight() - j) / 2;
-        float m = MinecraftClient.getInstance().getLastFrameDuration();
+
+        float lightBlock = client.player.getWorld().getLightLevel(LightType.BLOCK, client.player.getBlockPos()) / 15.0f;
+        float lightSky = (client.player.getWorld().getLightLevel(LightType.SKY, client.player.getBlockPos()) / 15.0f) -
+                (serverPlayer.getServerWorld().isNight() ? 0.6f : 0.0f);
+        float lighting = Math.max(lightBlock, lightSky);
 
         if(KeyInputHandler.getTiltedLeft()) {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
@@ -66,9 +103,20 @@ public class ScopeHudOverlay implements HudRenderCallback {
         } else {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 0);
         }
+
         context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(tiltStage),
                 (float)context.getScaledWindowWidth() / 2, (float)context.getScaledWindowHeight() / 2, 0);
-        context.drawTexture(HOLO_A, k, l + 100 - aimProgress, -100, 2.0f, 0.0f, i, j, i, j);
+        context.setShaderColor(lighting, lighting, lighting, 1.0f);
+
+        context.drawTexture(this.getRenderTexture(), k, l + 100 - aimProgress, -100, 2.0f, 0.0f, i, j, i, j);
+    }
+
+    public static void setShouldAddRecoil(boolean bool) {
+        shouldAddRecoil = bool;
+    }
+
+    protected Identifier getRenderTexture() {
+        return HOLO_A;
     }
 
 }
