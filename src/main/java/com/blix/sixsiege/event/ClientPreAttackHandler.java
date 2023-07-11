@@ -5,13 +5,20 @@ import com.blix.sixsiege.client.ScopeHudOverlay;
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.blix.sixsiege.networking.ModMessages;
 import com.blix.sixsiege.util.IEntityDataServer;
+import com.blix.sixsiege.util.MathHelperUtil;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockStateRaycastContext;
 
 public class ClientPreAttackHandler implements ClientPreAttackCallback {
 

@@ -21,12 +21,12 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
     private static final Identifier HOLO_A = new Identifier(SixSiege.MOD_ID, "textures/gui/scopes/holo_a.png");
     private int ammoSynced = 30;
-    protected float tiltStage = 0;
-    protected int aimProgress = 0;
+    protected static float tiltStage = 0;
+    protected static int aimProgress = 0;
 
     private static boolean shouldAddRecoil;
     private float f;
-    protected float g;
+    protected static float g;
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
@@ -35,7 +35,7 @@ public class ScopeHudOverlay implements HudRenderCallback {
         if(client.player != null) {
             if (shouldAddRecoil) {
                 f = 3.5f;
-                this.g = 0.5f;
+                g = 0.5f;
                 shouldAddRecoil = false;
             }
             f = MathHelper.lerp(1.5f * client.getLastFrameDuration(), f, 0.0f);
@@ -59,18 +59,19 @@ public class ScopeHudOverlay implements HudRenderCallback {
                     AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
                     float m = client.getLastFrameDuration();
 
-                    if (client.player.getActiveItem().isOf(weapon) && (((IEntityDataServer) client.player).getPersistentData().getInt("ammo") > 0)) {
+                    if (client.player.getActiveItem().isOf(weapon)) {
+                        CrosshairHudOverlay.setCrossProg(0);
                         this.renderScopeOverlay(drawContext);
-                        if(this.aimProgress < 90) {
-                            this.aimProgress = MathHelper.lerp(m, this.aimProgress, 100);
+                        if(aimProgress < 90) {
+                            aimProgress = MathHelper.lerp(m, aimProgress, 100);
                         } else {
-                            this.aimProgress = 100;
+                            aimProgress = 100;
                         }
                     } else {
-                        this.aimProgress = 0;
+                        aimProgress = 0;
                     }
                 } else {
-                    this.aimProgress = 0;
+                    aimProgress = 0;
                 }
             }
         }
@@ -79,9 +80,9 @@ public class ScopeHudOverlay implements HudRenderCallback {
     protected void renderScopeOverlay(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
         ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
-        this.g = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, this.g, 0.0f);
+        g = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, g, 0.0f);
         float m = client.getLastFrameDuration();
-        float fixed = this.g * m * 3;
+        float fixed = g * m * 5;
 
         float f;
         float g = f = (float)Math.min(context.getScaledWindowWidth(), context.getScaledWindowHeight());
@@ -96,9 +97,9 @@ public class ScopeHudOverlay implements HudRenderCallback {
                 (serverPlayer.getServerWorld().isNight() ? 0.6f : 0.0f);
         float lighting = Math.max(lightBlock, lightSky);
 
-        if(KeyInputHandler.getTiltedLeft()) {
+        if(KeyInputHandler.getTiltedLeft() && !client.player.isSprinting()) {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
-        } else if(KeyInputHandler.getTiltedRight()) {
+        } else if(KeyInputHandler.getTiltedRight() && !client.player.isSprinting()) {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 8);
         } else {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 0);
@@ -117,6 +118,14 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
     protected Identifier getRenderTexture() {
         return HOLO_A;
+    }
+
+    public static float getTiltStage() {
+        return tiltStage;
+    }
+
+    public static void setTiltStage(float tiltStage) {
+        ScopeHudOverlay.tiltStage = tiltStage;
     }
 
 }

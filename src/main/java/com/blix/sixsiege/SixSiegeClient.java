@@ -1,6 +1,7 @@
 package com.blix.sixsiege;
 
 import com.blix.sixsiege.client.AmmoHudOverlay;
+import com.blix.sixsiege.client.CrosshairHudOverlay;
 import com.blix.sixsiege.client.ReticleHudOverlay;
 import com.blix.sixsiege.client.ScopeHudOverlay;
 import com.blix.sixsiege.event.ClientPlayerTickHandler;
@@ -24,6 +25,7 @@ public class SixSiegeClient implements ClientModInitializer {
         HudRenderCallback.EVENT.register(new AmmoHudOverlay());
         HudRenderCallback.EVENT.register(new ScopeHudOverlay());
         HudRenderCallback.EVENT.register(new ReticleHudOverlay());
+        HudRenderCallback.EVENT.register(new CrosshairHudOverlay());
 
     }
 }

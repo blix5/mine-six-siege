@@ -17,7 +17,7 @@ public class ReticleHudOverlay extends ScopeHudOverlay {
     protected void renderScopeOverlay(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
         float m = client.getLastFrameDuration();
-        float fixed = this.g * m * 3;
+        float fixed = g * m * 5;
 
         float f;
         float g = f = (float)Math.min(context.getScaledWindowWidth(), context.getScaledWindowHeight());
@@ -29,8 +29,8 @@ public class ReticleHudOverlay extends ScopeHudOverlay {
 
         context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        context.drawTexture(this.getRenderTexture(), k + (i/2) - (i/10), (l + (j/2) - (j/10)) + 100 - aimProgress, -100, 0.0f, 0.0f,
-                i / 5, j / 5, i / 5, j / 5);
+        context.drawTexture(this.getRenderTexture(), k + (i/2) - (i/12), (l + (j/2) - (j/12)) + 100 - aimProgress, -100, 0.0f, 0.0f,
+                i / 6, j / 6, i / 6, j / 6);
     }
 
 }

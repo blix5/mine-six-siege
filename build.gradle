@@ -27,7 +27,7 @@ loom {
 			name "Data Generation"
 			vmArg "-Dfabric-api.datagen"
 			vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-			vmArg "-Dfabric-api.datagen.modid=template-mod"
+			vmArg "-Dfabric-api.datagen.modid=six-siege"
  
 			runDir "build/datagen"
 		}

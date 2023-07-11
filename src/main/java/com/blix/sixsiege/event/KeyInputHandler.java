@@ -61,24 +61,26 @@ public class KeyInputHandler {
                         }
                     }
 
-                    if(leanLeftKey.isPressed()) {
-                        if(tiltLeftReady) {
-                            tiltedLeft = !tiltedLeft;
-                            tiltedRight = false;
-                            tiltLeftReady = false;
+                    if(!client.player.isSprinting() && !client.player.getItemCooldownManager().isCoolingDown(weapon)) {
+                        if (leanLeftKey.isPressed()) {
+                            if (tiltLeftReady) {
+                                tiltedLeft = !tiltedLeft;
+                                tiltedRight = false;
+                                tiltLeftReady = false;
+                            }
+                        } else {
+                            tiltLeftReady = true;
                         }
-                    } else {
-                        tiltLeftReady = true;
-                    }
 
-                    if(leanRightKey.isPressed()) {
-                        if(tiltRightReady) {
-                            tiltedRight = !tiltedRight;
-                            tiltedLeft = false;
-                            tiltRightReady = false;
+                        if (leanRightKey.isPressed()) {
+                            if (tiltRightReady) {
+                                tiltedRight = !tiltedRight;
+                                tiltedLeft = false;
+                                tiltRightReady = false;
+                            }
+                        } else {
+                            tiltRightReady = true;
                         }
-                    } else {
-                        tiltRightReady = true;
                     }
                 }
             }

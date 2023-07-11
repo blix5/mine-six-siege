@@ -186,7 +186,7 @@ public class AnimatedItem extends Item implements GeoItem {
                     if (((IEntityDataServer) serverPlayer).getPersistentData()
                             .getInt("ammo") < weapon.maxAmmo) {
 
-                        if (this.reloading && !serverPlayer.getItemCooldownManager().isCoolingDown(weapon)) {
+                        if (this.reloading && !serverPlayer.getItemCooldownManager().isCoolingDown(weapon) && !serverPlayer.getActiveItem().isOf(weapon) && !serverPlayer.isSprinting()) {
                             tAnimationState.resetCurrentAnimation();
                             tAnimationState.getController().setAnimationSpeed(1.0D);
                             tAnimationState.getController().setAnimation(RawAnimation.begin().thenPlay("animation." + localpath + ".reload"));

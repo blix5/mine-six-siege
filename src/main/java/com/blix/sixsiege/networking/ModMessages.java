@@ -2,7 +2,6 @@ package com.blix.sixsiege.networking;
 
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.networking.packet.AmmoSyncDataS2CPacket;
-import com.blix.sixsiege.networking.packet.MovementSpeedC2SPacket;
 import com.blix.sixsiege.networking.packet.ReloadC2SPacket;
 import com.blix.sixsiege.networking.packet.ShootC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -14,12 +13,10 @@ public class ModMessages {
     public static final Identifier RELOADING_ID = new Identifier(SixSiege.MOD_ID, "reloading");
     public static final Identifier AMMO_SYNC_ID = new Identifier(SixSiege.MOD_ID, "ammo_sync");
     public static final Identifier SHOOTING_ID = new Identifier(SixSiege.MOD_ID, "shooting");
-    public static final Identifier MOVEMENT_SPEED_ID = new Identifier(SixSiege.MOD_ID, "movement");
 
     public static void registerC2SPackets() {
         ServerPlayNetworking.registerGlobalReceiver(RELOADING_ID, ReloadC2SPacket::recieve);
         ServerPlayNetworking.registerGlobalReceiver(SHOOTING_ID, ShootC2SPacket::recieve);
-        ServerPlayNetworking.registerGlobalReceiver(MOVEMENT_SPEED_ID, MovementSpeedC2SPacket::recieve);
     }
 
     public static void registerS2CPackets() {
