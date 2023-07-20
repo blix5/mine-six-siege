@@ -12,8 +12,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-
-import java.util.Random;
+import net.minecraft.util.math.random.Random;
 
 @Environment(EnvType.CLIENT)
 public class ScopeHudOverlay implements HudRenderCallback {
@@ -23,8 +22,9 @@ public class ScopeHudOverlay implements HudRenderCallback {
     protected static int aimProgress = 0;
 
     private static boolean shouldAddRecoil;
-    private float f;
-    protected static float g;
+    private static float recoil;
+    private static float prevf = 0;
+    protected static float scopeScale;
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
@@ -32,17 +32,17 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
         if(client.player != null) {
             if (shouldAddRecoil) {
-                f = 3.5f;
-                g = 0.5f;
+                recoil = 1.0f;
+                scopeScale = 0.5f;
                 shouldAddRecoil = false;
             }
-            f = MathHelper.lerp(1.5f * client.getLastFrameDuration(), f, 0.0f);
-            if (f > 0.00001) {
-                float fixed = f * client.getLastFrameDuration();
-                client.player.setPitch(client.player.getPitch() - fixed);
-                client.player.setYaw(client.player.getYaw() + new Random().nextFloat(fixed / -2, fixed / 2));
+            recoil = MathHelper.lerp(0.5f * client.getLastFrameDuration(), recoil, 0.0f);
+            if (recoil > 0.0001) {
+                client.player.setPitch(client.player.getPitch() - Math.abs(recoil - prevf));
+                client.player.setYaw(client.player.getYaw() + ((Random.create().nextFloat() - 0.5f) * Math.abs(recoil - prevf)));
+                prevf = recoil;
             } else {
-                f = 0;
+                recoil = 0;
             }
 
             if (client.options.getPerspective().isFirstPerson()) {
@@ -70,24 +70,25 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
     protected void renderScopeOverlay(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
-        g = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, g, 0.0f);
+        scopeScale = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, scopeScale, 0.0f);
         float m = client.getLastFrameDuration();
-        float fixed = g * m * 5;
 
         float f;
         float g = f = (float)Math.min(context.getScaledWindowWidth(), context.getScaledWindowHeight());
-        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * (float) 1.125 + fixed;
+        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * (float) 1.125 + (scopeScale * 2);
         int i = MathHelper.floor(f * h);
         int j = MathHelper.floor(g * h);
         int k = (context.getScaledWindowWidth() - i) / 2;
         int l = (context.getScaledWindowHeight() - j) / 2;
 
-        if(KeyInputHandler.getTiltedLeft() && !client.player.isSprinting()) {
-            tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
-        } else if(KeyInputHandler.getTiltedRight() && !client.player.isSprinting()) {
-            tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 8);
-        } else {
-            tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 0);
+        if(client.player != null) {
+            if (KeyInputHandler.getTiltedLeft() && !client.player.isSprinting()) {
+                tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
+            } else if (KeyInputHandler.getTiltedRight() && !client.player.isSprinting()) {
+                tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 8);
+            } else {
+                tiltStage = MathHelper.lerp(0.5f * m, tiltStage, 0);
+            }
         }
 
         context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(tiltStage),

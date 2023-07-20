@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
 @Environment(EnvType.CLIENT)
@@ -46,12 +46,19 @@ public class ClientPreAttackHandler implements ClientPreAttackCallback {
             }
             return true;
         } else if(player.getMainHandStack().isOf(ModItems.KNIFE)) {
-            if(clickCount > 0 && player.getItemCooldownManager().getCooldownProgress(player.getMainHandStack().getItem(), 1.0f) == 0) {
+            if(clickCount > 0 && player.getItemCooldownManager().getCooldownProgress(player.getMainHandStack().getItem(), 1.0f) == 0
+                    && client.crosshairTarget != null) {
                 player.getItemCooldownManager().set(player.getMainHandStack().getItem(), 20);
                 HitResult hit = client.crosshairTarget;
                 if (hit.getPos().distanceTo(player.getCameraPosVec(1.0f)) < 1.5f) {
                     if (hit.getType().equals(HitResult.Type.BLOCK)) {
-                        ClientPlayNetworking.send(ModMessages.KNIFE_ID, PacketByteBufs.create());
+                        PacketByteBuf knifeBuf = PacketByteBufs.create();
+                        knifeBuf.writeBlockHitResult((BlockHitResult) hit);
+                        ClientPlayNetworking.send(ModMessages.KNIFE_ID, knifeBuf);
+                    }
+                } else {
+                    if (hit.getType().equals(HitResult.Type.BLOCK)) {
+                        client.interactionManager.cancelBlockBreaking();
                     }
                 }
                 return false;

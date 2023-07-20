@@ -10,9 +10,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 
@@ -20,8 +17,7 @@ public class KnifeC2SPacket {
 
     public static void recieve(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler,
                                PacketByteBuf buf, PacketSender responseSender) {
-        HitResult hit = player.getCameraEntity().raycast(10.0D, 1.0f, false);
-        BlockPos pos = MathHelperUtil.getRaytracePos((BlockHitResult) hit);
+        BlockPos pos = MathHelperUtil.getRaytracePos(buf.readBlockHitResult());
         BlockState state = player.getWorld().getBlockState(pos);
 
         if(state.getBlock().getClass().equals(BarricadeBlock.class)) {

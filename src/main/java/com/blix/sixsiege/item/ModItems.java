@@ -19,13 +19,13 @@ public class ModItems {
             new KnifeItem(new FabricItemSettings().maxCount(1), 100));
 
     //Primaries
-    public static final Item M59081 = registerItem("m59081",
-            new Item(new FabricItemSettings()));
+    /*public static final Item M59081 = registerItem("m59081",
+            new Item(new FabricItemSettings()));*/
     public static final Item L85A2 = registerItem("l85a2",
             new AnimatedItem(new FabricItemSettings().maxCount(1), "l85a2",
                     47, 29, 25, 2, 48, 31,
                     ModSounds.L85A2_SHOOT, ModSounds.L85A2_RELOAD));
-    public static final Item AR33 = registerItem("ar33",
+    /*public static final Item AR33 = registerItem("ar33",
             new Item(new FabricItemSettings()));
     public static final Item G36C = registerItem("g36c",
             new Item(new FabricItemSettings()));
@@ -180,12 +180,12 @@ public class ModItems {
     public static final Item P10_RONI = registerItem("p10_roni",
             new Item(new FabricItemSettings()));
     public static final Item UZK50GI = registerItem("uzk50gi",
-            new Item(new FabricItemSettings()));
+            new Item(new FabricItemSettings()));*/
 
     //Secondaries
     public static final Item P226_MK_25 = registerItem("p226_mk_25",
             new Item(new FabricItemSettings()));
-    public static final Item M45_MEUSOC = registerItem("m45_meusoc",
+    /*public static final Item M45_MEUSOC = registerItem("m45_meusoc",
             new Item(new FabricItemSettings()));
     public static final Item S5_7_USG = registerItem("5_7_usg",
             new Item(new FabricItemSettings()));
@@ -242,7 +242,7 @@ public class ModItems {
     public static final Item KERATOS__357 = registerItem("keratos__357",
             new Item(new FabricItemSettings()));
     public static final Item P_10C = registerItem("p-10c",
-            new Item(new FabricItemSettings()));
+            new Item(new FabricItemSettings()));*/
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, new Identifier(SixSiege.MOD_ID, name), item);

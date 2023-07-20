@@ -3,7 +3,6 @@ package com.blix.sixsiege.client;
 import com.blix.sixsiege.SixSiege;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -19,13 +18,9 @@ public class ReticleHudOverlay extends ScopeHudOverlay {
 
     @Override
     protected void renderScopeOverlay(DrawContext context) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        float m = client.getLastFrameDuration();
-        float fixed = g * m * 5;
-
         float f;
         float g = f = (float)Math.min(context.getScaledWindowWidth(), context.getScaledWindowHeight());
-        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * (float) 1.125 + fixed;
+        float h = Math.min((float)context.getScaledWindowWidth() / f, (float)context.getScaledWindowHeight() / g) * (float) 1.125 + (scopeScale * 2);
         int i = MathHelper.floor(f * h);
         int j = MathHelper.floor(g * h);
         int k = (context.getScaledWindowWidth() - i) / 2;

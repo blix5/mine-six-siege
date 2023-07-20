@@ -15,9 +15,9 @@ public class ModItemGroup {
     public static ItemGroup R6S_PRIMARY = Registry.register(Registries.ITEM_GROUP, new Identifier(SixSiege.MOD_ID, "r6s_primary"),
             FabricItemGroup.builder().displayName(Text.translatable("itemgroup.r6s_primary"))
                     .icon(() -> new ItemStack(ModItems.L85A2)).entries((displayContext, entries) -> {
-                        entries.add(ModItems.M59081);
+                        //entries.add(ModItems.M59081);
                         entries.add(ModItems.L85A2);
-                        entries.add(ModItems.AR33);
+                        /*entries.add(ModItems.AR33);
                         entries.add(ModItems.G36C);
                         entries.add(ModItems.R4_C);
                         entries.add(ModItems.M1014);
@@ -94,13 +94,13 @@ public class ModItemGroup {
                         entries.add(ModItems.TCSG12);
                         entries.add(ModItems.COMMANDO_9);
                         entries.add(ModItems.P10_RONI);
-                        entries.add(ModItems.UZK50GI);
+                        entries.add(ModItems.UZK50GI);*/
                     }).build());
 
     public static ItemGroup R6S_SECONDARY = Registry.register(Registries.ITEM_GROUP, new Identifier(SixSiege.MOD_ID, "r6s_secondary"),
             FabricItemGroup.builder().displayName(Text.translatable("itemgroup.r6s_secondary"))
                     .icon(() -> new ItemStack(ModItems.P226_MK_25)).entries((displayContext, entries) -> {
-                        entries.add(ModItems.P226_MK_25);
+                        /*entries.add(ModItems.P226_MK_25);
                         entries.add(ModItems.M45_MEUSOC);
                         entries.add(ModItems.S5_7_USG);
                         entries.add(ModItems.P9);
@@ -129,7 +129,7 @@ public class ModItemGroup {
                         entries.add(ModItems.BAILIFF_410);
                         entries.add(ModItems.LUISON);
                         entries.add(ModItems.KERATOS__357);
-                        entries.add(ModItems.P_10C);
+                        entries.add(ModItems.P_10C);*/
                     }).build());
 
     public static ItemGroup R6S_MISC = Registry.register(Registries.ITEM_GROUP, new Identifier(SixSiege.MOD_ID, "r6s_misc"),
