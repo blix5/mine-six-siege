@@ -1,6 +1,8 @@
 package com.blix.sixsiege.mixin;
 
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import org.spongepowered.asm.mixin.Final;
@@ -9,6 +11,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@Environment(EnvType.CLIENT)
 @Mixin(Mouse.class)
 public class MouseMixin {
 

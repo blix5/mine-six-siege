@@ -2,22 +2,30 @@ package com.blix.sixsiege.item.custom;
 
 import com.blix.sixsiege.item.client.AnimatedItemRenderer;
 import com.blix.sixsiege.networking.ModMessages;
+import com.blix.sixsiege.networking.packet.AmmoSyncDataS2CPacket;
+import com.blix.sixsiege.networking.packet.CooldownS2CPacket;
 import com.blix.sixsiege.sound.ModSounds;
 import com.blix.sixsiege.util.IEntityDataServer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -91,7 +99,7 @@ public class AnimatedItem extends Item implements GeoItem {
 
     @Override
     public int getMaxUseTime(ItemStack stack) {
-        return 5000;
+        return 10000;
     }
 
     @Override
@@ -141,8 +149,7 @@ public class AnimatedItem extends Item implements GeoItem {
 
     public void setCancelReload(boolean cancelReload) {
         MinecraftClient client = MinecraftClient.getInstance();
-        ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
-        if(((IEntityDataServer) serverPlayer).getPersistentData().getInt("ammo") > 0) {
+        if(((IEntityDataServer) client.player).getPersistentData().getInt("ammo") > 0) {
             this.cancelReload = cancelReload;
             client.getSoundManager().stop(reloadSoundInstance);
         }
@@ -178,39 +185,44 @@ public class AnimatedItem extends Item implements GeoItem {
     private <T extends GeoAnimatable> PlayState reloadPredicate(AnimationState<T> tAnimationState) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player != null) {
-            ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
+            if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
+                AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
+                if (((IEntityDataServer) client.player).getPersistentData().getInt("ammo") < weapon.maxAmmo) {
 
-            if(serverPlayer != null) {
-                if (serverPlayer.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
-                    AnimatedItem weapon = (AnimatedItem) serverPlayer.getMainHandStack().getItem();
-                    if (((IEntityDataServer) serverPlayer).getPersistentData()
-                            .getInt("ammo") < weapon.maxAmmo) {
+                    if (this.reloading && !CooldownS2CPacket.getCoolingDown() && !client.player.getActiveItem().isOf(weapon)
+                            && !client.player.isSprinting()) {
+                        tAnimationState.resetCurrentAnimation();
+                        tAnimationState.getController().setAnimationSpeed(1.0D);
+                        tAnimationState.getController().setAnimation(RawAnimation.begin().thenPlay("animation." + localpath + ".reload"));
 
-                        if (this.reloading && !serverPlayer.getItemCooldownManager().isCoolingDown(weapon) && !serverPlayer.getActiveItem().isOf(weapon) && !serverPlayer.isSprinting()) {
-                            tAnimationState.resetCurrentAnimation();
-                            tAnimationState.getController().setAnimationSpeed(1.0D);
-                            tAnimationState.getController().setAnimation(RawAnimation.begin().thenPlay("animation." + localpath + ".reload"));
-                            serverPlayer.getItemCooldownManager().set(weapon, weapon.reloadLength);
-                            serverPlayer.getServerWorld().playSound(serverPlayer, serverPlayer.getBlockPos(),
-                                    ((AnimatedItem) serverPlayer.getMainHandStack().getItem()).getReloadSound(),
-                                    SoundCategory.PLAYERS, 1.0f, 1.0f);
-                            this.reloadSoundInstance = PositionedSoundInstance.master(((AnimatedItem) serverPlayer.getMainHandStack().getItem()).getReloadSound(),
-                                    1.0f, 1.0f);
-                            client.getSoundManager().play(reloadSoundInstance);
+                        PacketByteBuf cooldownBuf = PacketByteBufs.create();
+                        cooldownBuf.writerIndex(9);
+                        cooldownBuf.setInt(0, 0);
+                        cooldownBuf.setInt(1, reloadLength);
+                        ClientPlayNetworking.send(ModMessages.COOLDOWN_ID_S, cooldownBuf);
+
+                        ClientPlayNetworking.send(ModMessages.START_RELOADING_ID, PacketByteBufs.create());
+                        this.reloadSoundInstance = PositionedSoundInstance.master(((AnimatedItem) client.player.getMainHandStack().getItem()).getReloadSound(),
+                                1.0f, 1.0f);
+                        client.getSoundManager().play(reloadSoundInstance);
+
+                        this.reloading = false;
+                        this.sentReload = false;
+                    } else if (CooldownS2CPacket.getCoolingDown()) {
+                        if ((CooldownS2CPacket.getCooldownProgress() == 0) && !sentReload) {
+                            ClientPlayNetworking.send(ModMessages.RELOADING_ID, PacketByteBufs.create());
+                            this.sentReload = true;
+                        }
+                        if (this.cancelReload) {
+                            PacketByteBuf cooldownBuf = PacketByteBufs.create();
+                            cooldownBuf.writerIndex(9);
+                            cooldownBuf.setInt(0, 1);
+                            ClientPlayNetworking.send(ModMessages.COOLDOWN_ID_S, cooldownBuf);
+
                             this.reloading = false;
-                            this.sentReload = false;
-                        } else if (serverPlayer.getItemCooldownManager().isCoolingDown(weapon)) {
-                            if ((serverPlayer.getItemCooldownManager().getCooldownProgress(weapon, 1) == 0) && !sentReload) {
-                                ClientPlayNetworking.send(ModMessages.RELOADING_ID, PacketByteBufs.create());
-                                this.sentReload = true;
-                            }
-                            if (this.cancelReload) {
-                                serverPlayer.getItemCooldownManager().remove(weapon);
-                                this.reloading = false;
-                                this.cancelReload = false;
-                                tAnimationState.resetCurrentAnimation();
-                                tAnimationState.getController().setAnimationSpeed(0.0D);
-                            }
+                            this.cancelReload = false;
+                            tAnimationState.resetCurrentAnimation();
+                            tAnimationState.getController().setAnimationSpeed(0.0D);
                         }
                     }
                 }
@@ -224,5 +236,7 @@ public class AnimatedItem extends Item implements GeoItem {
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
+
+
 
 }

@@ -1,20 +1,19 @@
 package com.blix.sixsiege.client;
 
 import com.blix.sixsiege.SixSiege;
-import com.blix.sixsiege.event.KeyInputHandler;
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.blix.sixsiege.util.IEntityDataServer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.world.LightType;
 
+@Environment(EnvType.CLIENT)
 public class AmmoHudOverlay implements HudRenderCallback {
 
     private static Identifier WEAPON_HUD;

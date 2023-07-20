@@ -132,10 +132,14 @@ public class ModItemGroup {
                         entries.add(ModItems.P_10C);
                     }).build());
 
-    public static ItemGroup R6S_BLOCKS = Registry.register(Registries.ITEM_GROUP, new Identifier(SixSiege.MOD_ID, "r6s_blocks"),
-            FabricItemGroup.builder().displayName(Text.translatable("itemgroup.r6s_blocks"))
-                    .icon(() -> new ItemStack(ModBlocks.BARRICADE)).entries((displayContext, entries) -> {
-                        entries.add(ModBlocks.BARRICADE);
+    public static ItemGroup R6S_MISC = Registry.register(Registries.ITEM_GROUP, new Identifier(SixSiege.MOD_ID, "r6s_misc"),
+            FabricItemGroup.builder().displayName(Text.translatable("itemgroup.r6s_misc"))
+                    .icon(() -> new ItemStack(ModBlocks.BARRICADE_SINGLE)).entries((displayContext, entries) -> {
+                        entries.add(ModBlocks.BARRICADE_SINGLE);
+                        entries.add(ModBlocks.BARRICADE_MIDDLE);
+                        entries.add(ModBlocks.BARRICADE_LEFT);
+                        entries.add(ModBlocks.BARRICADE_RIGHT);
+                        entries.add(ModItems.KNIFE);
                     }).build());
 
     public static void registerItemGroups() {

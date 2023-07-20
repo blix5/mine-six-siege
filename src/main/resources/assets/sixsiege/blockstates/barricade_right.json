@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,half=lower,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_0",
+      "y": 90
+    },
+    "facing=east,half=upper,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_top_0",
+      "y": 90
+    },
+    "facing=north,half=lower,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_0"
+    },
+    "facing=north,half=upper,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_top_0"
+    },
+    "facing=south,half=lower,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_0",
+      "y": 180
+    },
+    "facing=south,half=upper,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_top_0",
+      "y": 180
+    },
+    "facing=west,half=lower,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_0",
+      "y": 270
+    },
+    "facing=west,half=upper,damaged=false,type=right": {
+      "model": "sixsiege:block/barricade_right_top_0",
+      "y": 270
+    },
+    "facing=east,half=lower,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_1",
+      "y": 90
+    },
+    "facing=east,half=upper,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_top_1",
+      "y": 90
+    },
+    "facing=north,half=lower,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_1"
+    },
+    "facing=north,half=upper,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_top_1"
+    },
+    "facing=south,half=lower,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_1",
+      "y": 180
+    },
+    "facing=south,half=upper,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_top_1",
+      "y": 180
+    },
+    "facing=west,half=lower,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_bottom_1",
+      "y": 270
+    },
+    "facing=west,half=upper,damaged=true,type=right": {
+      "model": "sixsiege:block/barricade_right_top_1",
+      "y": 270
+    }
+  }
+}

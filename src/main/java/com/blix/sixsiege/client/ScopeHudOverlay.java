@@ -3,24 +3,22 @@ package com.blix.sixsiege.client;
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.event.KeyInputHandler;
 import com.blix.sixsiege.item.custom.AnimatedItem;
-import com.blix.sixsiege.util.AmmoData;
-import com.blix.sixsiege.util.IEntityDataServer;
+import com.blix.sixsiege.networking.packet.LightS2CPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import net.minecraft.world.LightType;
 
 import java.util.Random;
 
+@Environment(EnvType.CLIENT)
 public class ScopeHudOverlay implements HudRenderCallback {
 
     private static final Identifier HOLO_A = new Identifier(SixSiege.MOD_ID, "textures/gui/scopes/holo_a.png");
-    private int ammoSynced = 30;
     protected static float tiltStage = 0;
     protected static int aimProgress = 0;
 
@@ -47,14 +45,7 @@ public class ScopeHudOverlay implements HudRenderCallback {
                 f = 0;
             }
 
-            if (ammoSynced != 0) {
-                ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
-                AmmoData.syncAmmo(((IEntityDataServer) serverPlayer).getPersistentData().getInt("ammo"), serverPlayer);
-                ammoSynced--;
-            }
-
-
-            if (client.options.getPerspective().isFirstPerson() && !client.isPaused()) {
+            if (client.options.getPerspective().isFirstPerson()) {
                 if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
                     AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
                     float m = client.getLastFrameDuration();
@@ -79,7 +70,6 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
     protected void renderScopeOverlay(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
-        ServerPlayerEntity serverPlayer = client.getServer().getPlayerManager().getPlayer(client.player.getUuid());
         g = MathHelper.lerp(client.getLastFrameDuration() * 0.5f, g, 0.0f);
         float m = client.getLastFrameDuration();
         float fixed = g * m * 5;
@@ -92,11 +82,6 @@ public class ScopeHudOverlay implements HudRenderCallback {
         int k = (context.getScaledWindowWidth() - i) / 2;
         int l = (context.getScaledWindowHeight() - j) / 2;
 
-        float lightBlock = client.player.getWorld().getLightLevel(LightType.BLOCK, client.player.getBlockPos()) / 15.0f;
-        float lightSky = (client.player.getWorld().getLightLevel(LightType.SKY, client.player.getBlockPos()) / 15.0f) -
-                (serverPlayer.getServerWorld().isNight() ? 0.6f : 0.0f);
-        float lighting = Math.max(lightBlock, lightSky);
-
         if(KeyInputHandler.getTiltedLeft() && !client.player.isSprinting()) {
             tiltStage = MathHelper.lerp(0.5f * m, tiltStage, -8);
         } else if(KeyInputHandler.getTiltedRight() && !client.player.isSprinting()) {
@@ -107,9 +92,10 @@ public class ScopeHudOverlay implements HudRenderCallback {
 
         context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(tiltStage),
                 (float)context.getScaledWindowWidth() / 2, (float)context.getScaledWindowHeight() / 2, 0);
-        context.setShaderColor(lighting, lighting, lighting, 1.0f);
-
+        context.setShaderColor(LightS2CPacket.getLighting(), LightS2CPacket.getLighting(), LightS2CPacket.getLighting(), 1.0f);
         context.drawTexture(this.getRenderTexture(), k, l + 100 - aimProgress, -100, 2.0f, 0.0f, i, j, i, j);
+        context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(-1 * tiltStage),
+                (float)context.getScaledWindowWidth() / 2, (float)context.getScaledWindowHeight() / 2, 0);
     }
 
     public static void setShouldAddRecoil(boolean bool) {

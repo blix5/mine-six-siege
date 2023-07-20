@@ -6,9 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.*;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -21,31 +19,35 @@ public class BarricadeBlock extends Block {
 
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final EnumProperty<BarricadeType> TYPE = EnumProperty.of("type", BarricadeType.class);
+    public static final IntProperty DAMAGE_STAGE = IntProperty.of("damage_stage", 0, 10);
+    public static final BooleanProperty DAMAGED = BooleanProperty.of("damaged");
 
     protected static final VoxelShape NORTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 14.0, 16.0, 16.0, 16.0);
     protected static final VoxelShape SOUTH_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 2.0);
     protected static final VoxelShape EAST_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 2.0, 16.0, 16.0);
     protected static final VoxelShape WEST_SHAPE = Block.createCuboidShape(14.0, 0.0, 0.0, 16.0, 16.0, 16.0);
 
-    public BarricadeBlock(Settings settings) {
+    public BarricadeBlock(Settings settings, BarricadeType type) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH)
+                .with(DAMAGE_STAGE, 0).with(TYPE, type).with(DAMAGED, false));
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         Direction direction = state.get(FACING);
-        switch (direction) {
-            default: {
+        switch(direction) {
+            default -> {
                 return NORTH_SHAPE;
             }
-            case SOUTH: {
+            case SOUTH -> {
                 return SOUTH_SHAPE;
             }
-            case WEST: {
+            case WEST -> {
                 return WEST_SHAPE;
             }
-            case EAST: {
+            case EAST -> {
                 return EAST_SHAPE;
             }
         }
@@ -75,7 +77,7 @@ public class BarricadeBlock extends Block {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(HALF, FACING);
+        builder.add(HALF, FACING, DAMAGE_STAGE, DAMAGED, TYPE);
     }
 
 }

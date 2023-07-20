@@ -111,11 +111,15 @@
   "item.sixsiege.keratos__357": "KERATOS .357",
   "item.sixsiege.p-10c": "P-10C",
 
-  "block.sixsiege.barricade": "Barricade",
+  "block.sixsiege.barricade_single": "Single Barricade",
+  "block.sixsiege.barricade_middle": "Middle Barricade",
+  "block.sixsiege.barricade_left": "Left Barricade",
+  "block.sixsiege.barricade_right": "Right Barricade",
+  "item.sixsiege.knife": "Knife",
 
   "itemgroup.r6s_primary": "R6S Primary Weapons",
   "itemgroup.r6s_secondary": "R6S Secondary Weapons",
-  "itemgroup.r6s_blocks": "R6S Blocks",
+  "itemgroup.r6s_misc": "R6S Miscellaneous",
 
   "key.category.sixsiege": "Rainbow Six: Siege Mod",
   "key.sixsiege.reload": "Reload",

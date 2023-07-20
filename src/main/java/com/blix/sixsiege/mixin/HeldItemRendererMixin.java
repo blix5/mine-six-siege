@@ -3,6 +3,8 @@ package com.blix.sixsiege.mixin;
 import com.blix.sixsiege.client.ScopeHudOverlay;
 import com.blix.sixsiege.event.KeyInputHandler;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Environment(EnvType.CLIENT)
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
 

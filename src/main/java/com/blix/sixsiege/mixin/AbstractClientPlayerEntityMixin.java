@@ -2,6 +2,8 @@ package com.blix.sixsiege.mixin;
 
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.mojang.authlib.GameProfile;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,11 +12,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Environment(EnvType.CLIENT)
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity {
 

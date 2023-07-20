@@ -7,6 +7,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 
 public class ModSounds {
 
@@ -17,7 +18,7 @@ public class ModSounds {
     public static SoundEvent BARRICADE_PLACE = registerSoundEvent("barricade_place");
     public static SoundEvent BARRICADE_HIT = registerSoundEvent("barricade_hit");
 
-    public static final BlockSoundGroup BARRICADE_SOUNDS = new BlockSoundGroup(1f, 1f,
+    public static final BlockSoundGroup BARRICADE_SOUNDS = new BlockSoundGroup(2f, 1f,
             ModSounds.BARRICADE_BREAK, SoundEvents.BLOCK_WOOD_STEP, ModSounds.BARRICADE_PLACE,
             ModSounds.BARRICADE_HIT, SoundEvents.BLOCK_WOOD_FALL);
 

@@ -2,12 +2,15 @@ package com.blix.sixsiege.client;
 
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+@Environment(EnvType.CLIENT)
 public class CrosshairHudOverlay implements HudRenderCallback {
 
     private static final Identifier CROSSHAIR = new Identifier(SixSiege.MOD_ID, "textures/gui/crosshair.png");

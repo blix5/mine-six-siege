@@ -1,22 +1,21 @@
 package com.blix.sixsiege.networking.packet;
 
+import com.blix.sixsiege.block.ModBlocks;
+import com.blix.sixsiege.block.custom.BarricadeBlock;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import com.blix.sixsiege.networking.ModMessages;
+import com.blix.sixsiege.sound.ModSounds;
 import com.blix.sixsiege.util.AmmoData;
 import com.blix.sixsiege.util.IEntityDataServer;
 import com.blix.sixsiege.util.MathHelperUtil;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.*;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.MinecraftServer;
@@ -29,7 +28,6 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockStateRaycastContext;
@@ -44,6 +42,7 @@ public class ShootC2SPacket {
 
             if (((IEntityDataServer) player).getPersistentData().getInt("ammo") > 0) {
                 AmmoData.removeAmmo(((IEntityDataServer) player), 1);
+
                 player.getServerWorld().playSound(null, player.getBlockPos(), ((AnimatedItem) player.getMainHandStack().getItem()).getShootSound(),
                         SoundCategory.PLAYERS, 1.0f, 1.0f);
                 player.getServerWorld().spawnParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1, player.getZ(), 1,
@@ -64,28 +63,68 @@ public class ShootC2SPacket {
                     offset = 0.0f;
                 }
 
-                Vec3d vec3d = player.getCameraPosVec(1.0f);
-                Vec3d vec3d2 = player.getRotationVec(1.0f).addRandom(Random.create(), (float)offset);
+                //Raytracing is fucking annoying
+                buf.writerIndex(48);
+                Vec3d vec3d = new Vec3d(buf.getFloat(0), buf.getFloat(8), buf.getFloat(16));
+                Vec3d vec3d2 = new Vec3d(buf.getFloat(24), buf.getFloat(32), buf.getFloat(40)).addRandom(Random.create(), (float)offset);
                 Vec3d vec3d3 = vec3d.add(vec3d2.x * 300.0D, vec3d2.y * 300.0D, vec3d2.z * 300.0D);
-                HitResult hitResult = player.getWorld().raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+                HitResult hitResult = player.getWorld().raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE,
+                        RaycastContext.FluidHandling.NONE, player));
 
                 Vec3d maxVec = hitResult.getPos();
-                Vec3d playerCameraVec = player.getCameraPosVec(1.0f);
 
                 BlockHitResult blockHitResult = player.getWorld().raycast(
-                        new BlockStateRaycastContext(playerCameraVec, maxVec, AbstractBlock.AbstractBlockState::isOpaque));
+                        new BlockStateRaycastContext(vec3d, hitResult.getPos(), AbstractBlock.AbstractBlockState::isOpaque));
 
-                boolean softWall = false;
-                if(blockHitResult != null) {
-                    BlockState state = player.getWorld().getBlockState(MathHelperUtil.getRaytracePos(blockHitResult));
-                    softWall = blockHitResult.getType().equals(HitResult.Type.MISS) && hitResult.getType().equals(HitResult.Type.BLOCK);
-                    player.getServerWorld().spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), blockHitResult.getPos().getX(), blockHitResult.getPos().getY(),
-                            blockHitResult.getPos().getZ(), 3, 0.2, 0.2, 0.2, 0.005);
+                boolean softWall;
+
+                BlockPos pos = MathHelperUtil.getRaytracePos(blockHitResult);
+                BlockState state = player.getWorld().getBlockState(pos);
+
+                softWall = blockHitResult.getType().equals(HitResult.Type.MISS) && hitResult.getType().equals(HitResult.Type.BLOCK);
+                player.getServerWorld().spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, state), blockHitResult.getPos().getX(),
+                        blockHitResult.getPos().getY(), blockHitResult.getPos().getZ(), 3, 0.2, 0.2, 0.2, 0.005);
+
+                HitResult tempHitResult = blockHitResult;
+                BlockHitResult tempBlockHitResult;
+                if(softWall) {
+                    if(state.getBlock().getClass().equals(BarricadeBlock.class)) {
+                        if(state.get(BarricadeBlock.DAMAGE_STAGE) < 10) {
+                            if(state.get(BarricadeBlock.DAMAGE_STAGE) > 5) {
+                                player.getWorld().setBlockState(pos, state.with(BarricadeBlock.DAMAGE_STAGE, state.get(BarricadeBlock.DAMAGE_STAGE) + 1)
+                                        .with(BarricadeBlock.DAMAGED, true));
+                                if(state.get(BarricadeBlock.DAMAGE_STAGE) == 6) {
+                                    player.getServerWorld().playSound(null, player.getBlockPos(), ModSounds.BARRICADE_HIT, SoundCategory.PLAYERS,
+                                            1.0f, 0.8f + (Random.create().nextFloat() * 2f / 5f));
+                                }
+                            } else {
+                                player.getWorld().setBlockState(pos, state.with(BarricadeBlock.DAMAGE_STAGE, state.get(BarricadeBlock.DAMAGE_STAGE) + 1));
+                            }
+                        } else {
+                            player.getWorld().breakBlock(pos, false);
+                        }
+                    } else if(state.getBlock().getClass().equals(GlassBlock.class) || state.getBlock().getClass().equals(StainedGlassPaneBlock.class)
+                            || state.getBlock().equals(Blocks.GLASS_PANE) || state.getBlock().getClass().equals(StainedGlassBlock.class)) {
+                        player.getWorld().breakBlock(pos, false);
+                    }
+
+                    for (int i = 0; i < 15; i++) {
+                        HitResult prevTempHitResult = tempHitResult;
+                        tempHitResult = player.getWorld().raycast(new RaycastContext(tempHitResult.getPos(), vec3d3, RaycastContext.ShapeType.OUTLINE,
+                                RaycastContext.FluidHandling.NONE, player));
+                        tempBlockHitResult = player.getWorld().raycast(
+                                new BlockStateRaycastContext(prevTempHitResult.getPos(), hitResult.getPos(), AbstractBlock.AbstractBlockState::isOpaque));
+
+                        if (tempBlockHitResult.getType().equals(HitResult.Type.BLOCK)) {
+                            maxVec = tempHitResult.getPos();
+                            break;
+                        }
+                    }
                 }
-                EntityHitResult entityHitResult = ProjectileUtil.raycast(player, playerCameraVec,
-                        softWall ? maxVec.add(maxVec.subtract(playerCameraVec)) : maxVec,
-                        new Box(player.getX() - 300, player.getY() - 300, player.getZ() - 300, player.getX() + 300, player.getY() + 300,
-                        player.getZ() + 300), EntityPredicates.VALID_LIVING_ENTITY, 10000.0d);
+
+                EntityHitResult entityHitResult = ProjectileUtil.raycast(player, vec3d, maxVec, new Box(player.getX() - 300, player.getY() - 300,
+                        player.getZ() - 300, player.getX() + 300, player.getY() + 300, player.getZ() + 300),
+                        EntityPredicates.VALID_LIVING_ENTITY, 10000.0d);
 
                 if (entityHitResult != null) {
                     if (entityHitResult.getType().equals(HitResult.Type.ENTITY)) {
@@ -100,10 +139,10 @@ public class ShootC2SPacket {
                     }
                 }
                 if (player.getItemCooldownManager().isCoolingDown(weapon)) {
-                    weapon.setCancelReload(true);
+                    ServerPlayNetworking.send(player, ModMessages.CANCEL_RELOAD_ID, PacketByteBufs.create());
                 }
             } else if (!player.getItemCooldownManager().isCoolingDown(weapon) && (((IEntityDataServer) player).getPersistentData().getInt("ammo") < 31)) {
-                weapon.setReloading(true);
+                ServerPlayNetworking.send(player, ModMessages.SET_RELOADING_ID, PacketByteBufs.create());
             }
         }
     }

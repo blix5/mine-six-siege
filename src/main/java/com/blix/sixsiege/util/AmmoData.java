@@ -5,6 +5,7 @@ import com.blix.sixsiege.networking.ModMessages;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -44,10 +45,10 @@ public class AmmoData {
     }
 
     public static int setAmmo(IEntityDataServer player, int amount) {
-        int maxAmmo = getMaxAmmo(MinecraftClient.getInstance().player);
+        int maxAmmo = getMaxAmmo((ServerPlayerEntity) player);
         NbtCompound nbt = player.getPersistentData();
 
-        int ammo = nbt.getInt("ammo");
+        int ammo;
         if(amount < 0) {
             ammo = 0;
         } else if(amount >= maxAmmo) {

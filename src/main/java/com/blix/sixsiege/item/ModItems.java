@@ -2,14 +2,21 @@ package com.blix.sixsiege.item;
 
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import com.blix.sixsiege.item.custom.KnifeItem;
 import com.blix.sixsiege.sound.ModSounds;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
+import net.minecraft.item.SwordItem;
+import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.ToolMaterials;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class ModItems {
+
+    public static final Item KNIFE = registerItem("knife",
+            new KnifeItem(new FabricItemSettings().maxCount(1), 100));
 
     //Primaries
     public static final Item M59081 = registerItem("m59081",

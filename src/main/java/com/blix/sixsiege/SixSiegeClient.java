@@ -9,11 +9,15 @@ import com.blix.sixsiege.event.ClientPreAttackHandler;
 import com.blix.sixsiege.event.KeyInputHandler;
 import com.blix.sixsiege.networking.ModMessages;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 
+@Environment(EnvType.CLIENT)
 public class SixSiegeClient implements ClientModInitializer {
+
     @Override
     public void onInitializeClient() {
 

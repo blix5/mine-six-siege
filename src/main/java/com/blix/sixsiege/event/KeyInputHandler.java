@@ -1,14 +1,18 @@
 package com.blix.sixsiege.event;
 
+import com.blix.sixsiege.item.ModItems;
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.blix.sixsiege.util.IEntityDataServer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
+@Environment(EnvType.CLIENT)
 public class KeyInputHandler {
 
     public static final String KEY_CATEGORY_SIXSIEGE = "key.category.sixsiege";
@@ -21,7 +25,6 @@ public class KeyInputHandler {
     public static KeyBinding leanRightKey;
 
     private static boolean reloadKeyReady = true;
-    private static boolean readyLeftMouse = false;
     private static boolean tiltLeftReady = true;
     private static boolean tiltRightReady = true;
 
@@ -30,7 +33,7 @@ public class KeyInputHandler {
 
     public static void registerKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if(client.player != null) {
+            if(client.player != null && !client.player.isSpectator() && !client.isPaused()) {
                 if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
                     AnimatedItem weapon = (AnimatedItem) client.player.getMainHandStack().getItem();
 
@@ -42,14 +45,6 @@ public class KeyInputHandler {
                         }
                     } else {
                         reloadKeyReady = true;
-                    }
-
-                    if (!client.mouse.wasLeftButtonClicked() && readyLeftMouse) {
-                        ClientPreAttackHandler.setCooldown(1);
-                        readyLeftMouse = false;
-                    }
-                    if (client.mouse.wasLeftButtonClicked() && !readyLeftMouse) {
-                        readyLeftMouse = true;
                     }
 
                     if (client.mouse.wasRightButtonClicked()) {

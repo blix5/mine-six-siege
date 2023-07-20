@@ -9,23 +9,23 @@ import net.minecraft.util.math.MathHelper;
 public class MathHelperUtil {
 
     public static BlockPos getRaytracePos(BlockHitResult hitResult) {
-        int x = MathHelper.floor(hitResult.getPos().getX());
-        int y = MathHelper.floor(hitResult.getPos().getY());
-        int z = MathHelper.floor(hitResult.getPos().getZ());
+        double x = hitResult.getPos().getX();
+        double y = hitResult.getPos().getY();
+        double z = hitResult.getPos().getZ();
 
         if(hitResult.getSide().equals(Direction.SOUTH)) {
-            z--;
+            z -= 0.1;
         }
 
         if(hitResult.getSide().equals(Direction.EAST)) {
-            x--;
+            x -= 0.1;
         }
 
         if(hitResult.getSide().equals(Direction.UP)) {
-            y--;
+            y -= 0.1;
         }
 
-        return new BlockPos(x, y, z);
+        return new BlockPos(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
     }
 
 }

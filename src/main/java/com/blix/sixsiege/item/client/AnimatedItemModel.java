@@ -2,9 +2,12 @@ package com.blix.sixsiege.item.client;
 
 import com.blix.sixsiege.SixSiege;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 
+@Environment(EnvType.CLIENT)
 public class AnimatedItemModel extends GeoModel<AnimatedItem> {
 
     @Override

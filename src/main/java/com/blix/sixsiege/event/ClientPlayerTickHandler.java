@@ -2,25 +2,37 @@ package com.blix.sixsiege.event;
 
 import com.blix.sixsiege.client.ScopeHudOverlay;
 import com.blix.sixsiege.item.custom.AnimatedItem;
+import com.blix.sixsiege.networking.ModMessages;
 import com.blix.sixsiege.util.IEntityDataServer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.text.Text;
+import net.minecraft.network.PacketByteBuf;
 
 import java.util.UUID;
 
+@Environment(EnvType.CLIENT)
 public class ClientPlayerTickHandler implements ClientTickEvents.StartTick {
 
     private static boolean hasAimed = false;
     private static final UUID AIM_SLOW_ID = UUID.fromString("165f5202-1ed2-11ee-be56-0242ac120002");
+    private static boolean hasAmmoSynced = false;
 
     @Override
     public void onStartTick(MinecraftClient client) {
 
         if(client.player != null) {
             if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
+                if(!hasAmmoSynced) {
+                    ClientPlayNetworking.send(ModMessages.AMMO_SYNC_REQ_ID, PacketByteBufs.create());
+                    hasAmmoSynced = true;
+                }
+
                 if (client.player.getActiveItem().getItem().getClass().equals(AnimatedItem.class)) {
                     if(!hasAimed) {
                         client.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
