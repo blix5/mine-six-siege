@@ -2,14 +2,13 @@
 	"schemaVersion": 1,
 	"id": "sixsiege",
 	"version": "${version}",
-	"name": "Rainbow Six: Siege Mod",
-	"description": "adds the worst fps game of all time into minecraft because fuck you all",
+	"name": "Mine Six Siege",
+	"description": "A recreation of some of the mechanics and weapons from Tom Clancy's Rainbow Six Siege in Minecraft.",
 	"authors": [
 		"blix5"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/blueberryperson5/six-siege-mod"
+		"sources": "https://github.com/blueberryperson5/mine-six-siege/"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/sixsiege/icon.png",
