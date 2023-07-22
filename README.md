@@ -1,4 +1,4 @@
-# Not Tom Clancy's Mine Six Siege
+# Mine Six Siege Mod 1.20.1
 A recreation of some of the mechanics and weapons from Tom Clancy's Rainbow Six Siege in Minecraft. 
 
 > **What is Rainbow Six Siege?**
