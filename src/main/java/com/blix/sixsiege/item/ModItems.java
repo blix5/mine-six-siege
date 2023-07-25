@@ -23,7 +23,7 @@ public class ModItems {
             new Item(new FabricItemSettings()));*/
     public static final Item L85A2 = registerItem("l85a2",
             new AnimatedItem(new FabricItemSettings().maxCount(1), "l85a2",
-                    47, 29, 25, 2, 48, 31,
+                    9/*47*/, 6/*29*/, 25, 2, 48, 31,
                     ModSounds.L85A2_SHOOT, ModSounds.L85A2_RELOAD));
     /*public static final Item AR33 = registerItem("ar33",
             new Item(new FabricItemSettings()));
