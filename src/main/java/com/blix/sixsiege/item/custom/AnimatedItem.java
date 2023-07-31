@@ -86,7 +86,7 @@ public class AnimatedItem extends Item implements GeoItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        user.playSound(SoundEvents.ITEM_SPYGLASS_USE, 1.0f, 1.0f);
+        user.playSound(SoundEvents.ITEM_SPYGLASS_USE, 0.3f, 1.0f);
         user.incrementStat(Stats.USED.getOrCreateStat(this));
         return ItemUsage.consumeHeldItem(world, user, hand);
     }
@@ -108,7 +108,7 @@ public class AnimatedItem extends Item implements GeoItem {
     }
 
     private void playStopUsingSound(LivingEntity user) {
-        user.playSound(SoundEvents.ITEM_SPYGLASS_STOP_USING, 1.0f, 1.0f);
+        user.playSound(SoundEvents.ITEM_SPYGLASS_STOP_USING, 0.3f, 1.0f);
     }
 
     public String getLocalpath() {

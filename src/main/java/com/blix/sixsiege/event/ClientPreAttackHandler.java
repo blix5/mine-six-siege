@@ -12,7 +12,10 @@ import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 
@@ -34,9 +37,13 @@ public class ClientPreAttackHandler implements ClientPreAttackCallback {
                 shootBuf.setFloat(24, (float)player.getRotationVec(1.0f).getX());
                 shootBuf.setFloat(32, (float)player.getRotationVec(1.0f).getY());
                 shootBuf.setFloat(40, (float)player.getRotationVec(1.0f).getZ());
+
                 ClientPlayNetworking.send(ModMessages.SHOOTING_ID, shootBuf);
                 if (((IEntityDataServer) player).getPersistentData().getInt("ammo") > 0) {
                     ScopeHudOverlay.setShouldAddRecoil(true);
+                    PositionedSoundInstance reloadSoundInstance = PositionedSoundInstance.master(((AnimatedItem) player.getMainHandStack().getItem())
+                            .getShootSound(), 1.2f, 5.0f);
+                    client.getSoundManager().play(reloadSoundInstance);
                 }
                 shootCooldown++;
             } else if(shootCooldown < ((AnimatedItem) player.getMainHandStack().getItem()).getFireRate()) {
@@ -54,6 +61,7 @@ public class ClientPreAttackHandler implements ClientPreAttackCallback {
                     if (hit.getType().equals(HitResult.Type.BLOCK)) {
                         PacketByteBuf knifeBuf = PacketByteBufs.create();
                         knifeBuf.writeBlockHitResult((BlockHitResult) hit);
+
                         ClientPlayNetworking.send(ModMessages.KNIFE_ID, knifeBuf);
                     }
                 } else {

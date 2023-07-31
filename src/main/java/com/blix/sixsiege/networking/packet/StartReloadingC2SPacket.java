@@ -13,7 +13,7 @@ public class StartReloadingC2SPacket {
     public static void recieve(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler,
                                PacketByteBuf buf, PacketSender responseSender) {
         if(player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
-            player.getServerWorld().playSound(player, player.getBlockPos(),
+            player.getServerWorld().playSoundFromEntity(player, player,
                     ((AnimatedItem) player.getMainHandStack().getItem()).getReloadSound(),
                     SoundCategory.PLAYERS, 1.0f, 1.0f);
         }

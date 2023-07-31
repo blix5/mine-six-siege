@@ -43,8 +43,8 @@ public class ShootC2SPacket {
             if (((IEntityDataServer) player).getPersistentData().getInt("ammo") > 0) {
                 AmmoData.removeAmmo(((IEntityDataServer) player), 1);
 
-                player.getServerWorld().playSound(null, player.getBlockPos(), ((AnimatedItem) player.getMainHandStack().getItem()).getShootSound(),
-                        SoundCategory.PLAYERS, 1.0f, 1.0f);
+                player.getServerWorld().playSoundFromEntity(player, player, ((AnimatedItem) player.getMainHandStack().getItem()).getShootSound(),
+                            SoundCategory.PLAYERS, 5.0f, 1.2f);
                 player.getServerWorld().spawnParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1, player.getZ(), 1,
                         0.1, 0.1, 0.1, 0.005);
 
@@ -94,7 +94,7 @@ public class ShootC2SPacket {
                                 player.getWorld().setBlockState(pos, state.with(BarricadeBlock.DAMAGE_STAGE, state.get(BarricadeBlock.DAMAGE_STAGE) + 1)
                                         .with(BarricadeBlock.DAMAGED, true));
                                 if(state.get(BarricadeBlock.DAMAGE_STAGE) == 6) {
-                                    player.getServerWorld().playSound(null, player.getBlockPos(), ModSounds.BARRICADE_HIT, SoundCategory.PLAYERS,
+                                    player.getServerWorld().playSound(null, pos, ModSounds.BARRICADE_HIT, SoundCategory.BLOCKS,
                                             1.0f, 0.8f + (Random.create().nextFloat() * 2f / 5f));
                                 }
                             } else {
