@@ -70,11 +70,7 @@ public class AmmoData {
 
     private static int getMaxAmmo(PlayerEntity player) {
         if(player != null) {
-            if (player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
-                return ((AnimatedItem) player.getMainHandStack().getItem()).getMaxAmmo();
-            } else {
-                return 0;
-            }
+            return 31;
         } else {
             return 0;
         }

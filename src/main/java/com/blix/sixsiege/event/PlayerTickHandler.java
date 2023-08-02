@@ -2,6 +2,7 @@ package com.blix.sixsiege.event;
 
 import com.blix.sixsiege.item.custom.AnimatedItem;
 import com.blix.sixsiege.networking.ModMessages;
+import com.blix.sixsiege.util.AmmoData;
 import com.blix.sixsiege.util.IEntityDataServer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

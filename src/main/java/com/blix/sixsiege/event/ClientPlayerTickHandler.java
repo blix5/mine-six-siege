@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
 
 import java.util.UUID;
 
@@ -21,17 +22,12 @@ public class ClientPlayerTickHandler implements ClientTickEvents.StartTick {
 
     private static boolean hasAimed = false;
     private static final UUID AIM_SLOW_ID = UUID.fromString("165f5202-1ed2-11ee-be56-0242ac120002");
-    private static boolean hasAmmoSynced = false;
 
     @Override
     public void onStartTick(MinecraftClient client) {
 
         if(client.player != null) {
             if (client.player.getMainHandStack().getItem().getClass().equals(AnimatedItem.class)) {
-                if(!hasAmmoSynced) {
-                    ClientPlayNetworking.send(ModMessages.AMMO_SYNC_REQ_ID, PacketByteBufs.create());
-                    hasAmmoSynced = true;
-                }
 
                 if (client.player.getActiveItem().getItem().getClass().equals(AnimatedItem.class)) {
                     if(!hasAimed) {
