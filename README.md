@@ -24,5 +24,15 @@ Misc:
 
 ### **REQUIRES LATEST GECKOLIB RELEASE - FABRIC ONLY**
 
+## **FAQ:**
+**Q:** Why can't I open my inventory or drop items?
+**A:** This means you need to rebind your leaning and/or reload key to your chosen preference. 
+
+**Q:** Will you port this mod to Forge?
+**A:** Probably not, I'm not planning on keeping this mod updated consistently either, it's mostly just a short project.
+
+**Q:** Can I use this mod in my modpack?
+**A:** Yeah sure, do whatever you want with it.
+
 **YouTube:** (might post updates here)
 [blix5](https://www.youtube.com/channel/UCAA0oOHGGycyMvnKGv2XfeQ)
