@@ -25,6 +25,7 @@ Misc:
 ### **REQUIRES LATEST GECKOLIB RELEASE - FABRIC ONLY**
 
 ## **FAQ:**
+
 **Q:** Why can't I open my inventory or drop items?
 **A:** This means you need to rebind your leaning and/or reload key to your chosen preference. 
 
