@@ -10,7 +10,7 @@
 	"contact": {
 		"sources": "https://github.com/blueberryperson5/mine-six-siege/"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/sixsiege/icon.png",
 	"environment": "*",
 	"entrypoints": {
