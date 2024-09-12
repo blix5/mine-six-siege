@@ -35,5 +35,10 @@ Misc:
 **Q:** Can I use this mod in my modpack?
 **A:** Yeah sure, do whatever you want with it.
 
-**YouTube:** (might post updates here)
+## **Links:**
+
+**YouTube:**
 [blix5](https://www.youtube.com/channel/UCAA0oOHGGycyMvnKGv2XfeQ)
+
+**Video/Showcase:**
+[I made Rainbow Six Siege in Minecraft (kinda)](https://www.youtube.com/watch?v=WjnLC4RN9X4)
